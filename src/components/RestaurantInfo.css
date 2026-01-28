@@ -1,0 +1,171 @@
+.restaurant-info {
+  width: 100%;
+  max-width: 600px;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.result-header h2 {
+  font-size: 2rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.restaurant-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.restaurant-card h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.restaurant-card p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.category {
+  color: #764ba2 !important;
+  font-weight: 600;
+}
+
+.address {
+  color: #555 !important;
+}
+
+.phone a {
+  color: #43e97b;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.phone a:hover {
+  color: #38f9d7;
+}
+
+.distance {
+  color: #f5576c !important;
+  font-weight: 600;
+}
+
+.action-buttons {
+  margin-top: 2rem;
+}
+
+.action-buttons h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 1.5rem 0 0.8rem 0;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.map-button,
+.delivery-button {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.map-button:hover,
+.delivery-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.map-button:active,
+.delivery-button:active {
+  transform: translateY(0);
+}
+
+/* Map buttons */
+.map-button.naver {
+  background: linear-gradient(135deg, #03C75A 0%, #00A84D 100%);
+}
+
+.map-button.kakao {
+  background: linear-gradient(135deg, #FEE500 0%, #FFCD00 100%);
+  color: #333;
+}
+
+/* Delivery buttons */
+.delivery-button.baemin {
+  background: linear-gradient(135deg, #2AC1BC 0%, #25A6A1 100%);
+}
+
+.delivery-button.coupang {
+  background: linear-gradient(135deg, #FF6B00 0%, #E65C00 100%);
+}
+
+.delivery-button.yogiyo {
+  background: linear-gradient(135deg, #FA0050 0%, #E00046 100%);
+}
+
+@media (max-width: 768px) {
+  .restaurant-card {
+    padding: 1.5rem;
+  }
+
+  .restaurant-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .map-button,
+  .delivery-button {
+    width: 100%;
+    min-width: unset;
+  }
+}
