@@ -1,91 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import './App.css';
 import Roulette from './components/Roulette';
-import RestaurantInfo from './components/RestaurantInfo';
-import LocationButton from './components/LocationButton';
+import BlindBoxResult from './components/BlindBoxResult';
+import { blindBoxGroups } from './data/blindBoxes';
 
 function App() {
-  const [restaurants, setRestaurants] = useState([]);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
+  const [activeGroupId, setActiveGroupId] = useState(blindBoxGroups[0].id);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [drawCount, setDrawCount] = useState(0);
 
-  const handleLocationSuccess = (position) => {
-    const { latitude, longitude } = position.coords;
-    setUserLocation({ lat: latitude, lng: longitude });
-  };
-
-  const handleLocationError = (error) => {
-    console.error('위치 정보를 가져올 수 없습니다:', error);
-    alert('위치 정보를 가져올 수 없습니다. 위치 권한을 확인해주세요.');
-  };
-
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        handleLocationSuccess,
-        handleLocationError
-      );
-    } else {
-      alert('이 브라우저는 위치 서비스를 지원하지 않습니다.');
-    }
-  };
+  const activeGroup = useMemo(
+    () => blindBoxGroups.find((group) => group.id === activeGroupId) || blindBoxGroups[0],
+    [activeGroupId]
+  );
 
   const handleSpin = () => {
-    if (!userLocation) {
-      alert('먼저 위치를 설정해주세요!');
-      return;
-    }
-    if (restaurants.length === 0) {
-      alert('주변에 음식점이 없습니다!');
-      return;
-    }
+    setSelectedItem(null);
     setIsSpinning(true);
   };
 
-  const handleSpinComplete = (restaurant) => {
-    setSelectedRestaurant(restaurant);
+  const handleSpinComplete = (item) => {
+    setSelectedItem(item);
     setIsSpinning(false);
+    setDrawCount((count) => count + 1);
+  };
+
+  const handleGroupChange = (groupId) => {
+    if (isSpinning) return;
+    setActiveGroupId(groupId);
+    setSelectedItem(null);
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🍽️ 음식점 룰렛</h1>
-        <p>오늘 뭐 먹을까? 룰렛이 정해드립니다!</p>
+        <div>
+          <p className="eyebrow">本地随机盲盒</p>
+          <h1>今晚吃什么盲盒</h1>
+          <p>把选择交给转盘，给胃一个答案。</p>
+        </div>
       </header>
 
       <main className="App-main">
-        <LocationButton 
-          onGetLocation={getLocation}
-          userLocation={userLocation}
-          onFetchRestaurants={setRestaurants}
-        />
+        <section className="blindbox-panel" aria-labelledby="blindbox-title">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">盲盒主题</p>
+              <h2 id="blindbox-title">{activeGroup.title}</h2>
+            </div>
+            <div className="panel-stats">
+              <span>{activeGroup.items.length} 个选项</span>
+              <span>已开 {drawCount} 次</span>
+            </div>
+          </div>
 
-        {restaurants.length > 0 && (
+          <div className="group-tabs" role="tablist" aria-label="盲盒主题">
+            {blindBoxGroups.map((group) => (
+              <button
+                key={group.id}
+                type="button"
+                className={group.id === activeGroupId ? 'group-tab active' : 'group-tab'}
+                onClick={() => handleGroupChange(group.id)}
+                disabled={isSpinning}
+                aria-selected={group.id === activeGroupId}
+                role="tab"
+              >
+                <span>{group.icon}</span>
+                {group.title}
+              </button>
+            ))}
+          </div>
+
           <div className="roulette-section">
             <Roulette
-              restaurants={restaurants}
+              items={activeGroup.items}
               isSpinning={isSpinning}
               onSpinComplete={handleSpinComplete}
             />
-            <button 
+            <button
               className="spin-button"
               onClick={handleSpin}
               disabled={isSpinning}
             >
-              {isSpinning ? '돌리는 중...' : '🎰 룰렛 돌리기!'}
+              {isSpinning ? '开盒中...' : selectedItem ? '再开一次' : '开盲盒'}
             </button>
           </div>
-        )}
+        </section>
 
-        {selectedRestaurant && !isSpinning && (
-          <RestaurantInfo restaurant={selectedRestaurant} />
+        {selectedItem && !isSpinning && (
+          <BlindBoxResult item={selectedItem} onRetry={handleSpin} />
         )}
       </main>
 
       <footer className="App-footer">
-        <p>Made with ❤️ for food lovers</p>
+        <p>Food Blind Box MVP</p>
       </footer>
     </div>
   );

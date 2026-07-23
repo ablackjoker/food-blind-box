@@ -1,0 +1,124 @@
+.blind-result {
+  width: 100%;
+  max-width: 640px;
+  background: #fffdf8;
+  border: 1px solid rgba(41, 35, 24, 0.12);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 18px 42px rgba(38, 30, 18, 0.16);
+  animation: resultIn 0.35s ease-out;
+}
+
+@keyframes resultIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-topline {
+  color: #a23d2b;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  margin-bottom: 0.5rem;
+}
+
+.blind-result h2 {
+  color: #241d18;
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.result-category {
+  color: #6b625b;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem;
+}
+
+.result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.result-meta span {
+  background: #f2eadf;
+  border: 1px solid rgba(117, 80, 43, 0.16);
+  border-radius: 999px;
+  color: #4b3a2c;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.4rem 0.7rem;
+}
+
+.result-reason,
+.result-tip {
+  color: #3d3630;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0.7rem 0;
+}
+
+.result-tip {
+  color: #6b4b2e;
+  background: #fff4df;
+  border-left: 4px solid #e2a43b;
+  padding: 0.8rem 0.9rem;
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.primary-button,
+.secondary-button {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 800;
+  min-height: 48px;
+  padding: 0 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button {
+  background: #1f7a4d;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(31, 122, 77, 0.26);
+}
+
+.secondary-button {
+  background: #2f2a26;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(47, 42, 38, 0.18);
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 560px) {
+  .blind-result {
+    padding: 1.2rem;
+  }
+
+  .blind-result h2 {
+    font-size: 1.65rem;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+}

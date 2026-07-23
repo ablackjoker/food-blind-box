@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.foodroulette.app',
-  appName: 'Food Roulette',
+  appName: '今晚吃什么盲盒',
   webDir: 'build'
 };
 

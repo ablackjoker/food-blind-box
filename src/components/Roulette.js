@@ -1,48 +1,60 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './Roulette.css';
 
-const Roulette = ({ restaurants, isSpinning, onSpinComplete }) => {
+const colors = [
+  '#c94f3d',
+  '#2d7f75',
+  '#e1a638',
+  '#476a9f',
+  '#7a5aa6',
+  '#d46f3a',
+  '#37895d',
+  '#a63f67',
+  '#3f7d9d',
+  '#b78b2d'
+];
+
+const Roulette = ({ items, isSpinning, onSpinComplete }) => {
   const canvasRef = useRef(null);
+  const itemsRef = useRef(items);
+  const rotationRef = useRef(0);
+  const onSpinCompleteRef = useRef(onSpinComplete);
   const [rotation, setRotation] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(null);
-
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', 
-    '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
-    '#F8B4D9', '#A2D5AB'
-  ];
 
   useEffect(() => {
-    drawRoulette();
-  }, [restaurants, rotation]);
+    itemsRef.current = items;
+  }, [items]);
 
   useEffect(() => {
-    if (isSpinning) {
-      spinRoulette();
-    }
-  }, [isSpinning]);
+    rotationRef.current = rotation;
+  }, [rotation]);
 
-  const drawRoulette = () => {
+  useEffect(() => {
+    onSpinCompleteRef.current = onSpinComplete;
+  }, [onSpinComplete]);
+
+  const drawRoulette = useCallback(() => {
+    const entries = items;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
+    const radius = Math.min(centerX, centerY) - 12;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (restaurants.length === 0) return;
+    if (entries.length === 0) return;
 
-    const anglePerSlice = (2 * Math.PI) / restaurants.length;
+    const anglePerSlice = (2 * Math.PI) / entries.length;
 
-    // Draw slices
-    restaurants.forEach((restaurant, index) => {
+    entries.forEach((item, index) => {
       const startAngle = index * anglePerSlice + rotation;
       const endAngle = startAngle + anglePerSlice;
 
-      // Draw slice
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -50,93 +62,97 @@ const Roulette = ({ restaurants, isSpinning, onSpinComplete }) => {
       ctx.fillStyle = colors[index % colors.length];
       ctx.fill();
 
-      // Draw border
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Draw text
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.rotate(startAngle + anglePerSlice / 2);
       ctx.textAlign = 'center';
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 14px Arial';
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 3;
-      
-      const text = restaurant.place_name || restaurant.name;
-      const maxLength = 15;
-      const displayText = text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-      
-      ctx.fillText(displayText, radius * 0.6, 5);
+      ctx.font = '700 15px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+      ctx.shadowBlur = 4;
+
+      const text = item.place_name || item.name;
+      const maxLength = 7;
+      const displayText = text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+
+      ctx.fillText(displayText, radius * 0.62, 5);
       ctx.restore();
     });
 
-    // Draw center circle
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-    ctx.fillStyle = '#333';
+    ctx.arc(centerX, centerY, 36, 0, 2 * Math.PI);
+    ctx.fillStyle = '#241d18';
     ctx.fill();
-    ctx.strokeStyle = '#fff';
+    ctx.strokeStyle = '#fff8ee';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff8ee';
+    ctx.font = '800 14px "Microsoft YaHei", "PingFang SC", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('开盒', centerX, centerY);
+
+    ctx.beginPath();
+    ctx.moveTo(centerX, 8);
+    ctx.lineTo(centerX - 18, 44);
+    ctx.lineTo(centerX + 18, 44);
+    ctx.closePath();
+    ctx.fillStyle = '#f0c44c';
+    ctx.fill();
+    ctx.strokeStyle = '#fff8ee';
     ctx.lineWidth = 3;
     ctx.stroke();
+  }, [items, rotation]);
 
-    // Draw pointer (at the top)
-    ctx.beginPath();
-    ctx.moveTo(centerX, 10);
-    ctx.lineTo(centerX - 15, 40);
-    ctx.lineTo(centerX + 15, 40);
-    ctx.closePath();
-    ctx.fillStyle = '#FF4444';
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  };
+  useEffect(() => {
+    drawRoulette();
+  }, [drawRoulette]);
 
-  const spinRoulette = () => {
-    const randomSpins = 5 + Math.random() * 3; // 5-8 full rotations
+  useEffect(() => {
+    if (!isSpinning) return undefined;
+
+    const currentItems = itemsRef.current;
+    if (currentItems.length === 0) return undefined;
+
+    let animationFrameId;
+    const randomSpins = 5 + Math.random() * 3;
     const randomAngle = Math.random() * 2 * Math.PI;
     const totalRotation = randomSpins * 2 * Math.PI + randomAngle;
-    
-    const duration = 4000; // 4 seconds
-    const startTime = Date.now();
-    const startRotation = rotation;
+    const duration = 3800;
+    const startTime = performance.now();
+    const startRotation = rotationRef.current;
 
     const animate = () => {
-      const now = Date.now();
+      const now = performance.now();
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function (ease-out)
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const currentRotation = startRotation + totalRotation * easeOut;
 
+      rotationRef.current = currentRotation;
       setRotation(currentRotation);
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
       } else {
-        // Calculate selected restaurant
         const normalizedRotation = currentRotation % (2 * Math.PI);
-        const anglePerSlice = (2 * Math.PI) / restaurants.length;
-        
-        // The pointer is at the top (90 degrees or PI/2)
-        // We need to find which slice is at the top
+        const anglePerSlice = (2 * Math.PI) / currentItems.length;
         let pointerAngle = (3 * Math.PI / 2 - normalizedRotation) % (2 * Math.PI);
         if (pointerAngle < 0) pointerAngle += 2 * Math.PI;
-        
+
         const selectedIdx = Math.floor(pointerAngle / anglePerSlice);
-        const selected = restaurants[selectedIdx];
-        
-        setSelectedIndex(selectedIdx);
-        onSpinComplete(selected);
+        onSpinCompleteRef.current(currentItems[selectedIdx]);
       }
     };
 
     animate();
-  };
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [isSpinning]);
 
   return (
     <div className="roulette-container">
@@ -145,6 +161,7 @@ const Roulette = ({ restaurants, isSpinning, onSpinComplete }) => {
         width={500}
         height={500}
         className="roulette-canvas"
+        aria-label="美食盲盒转盘"
       />
     </div>
   );

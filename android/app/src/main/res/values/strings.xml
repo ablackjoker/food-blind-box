@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Food Roulette</string>
-    <string name="title_activity_main">Food Roulette</string>
+    <string name="app_name">今晚吃什么盲盒</string>
+    <string name="title_activity_main">今晚吃什么盲盒</string>
     <string name="package_name">com.foodroulette.app</string>
     <string name="custom_url_scheme">com.foodroulette.app</string>
 </resources>

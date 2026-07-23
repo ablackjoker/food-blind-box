@@ -2,14 +2,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .roulette-canvas {
   max-width: 100%;
   height: auto;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  background: #fff8ee;
+  border: 8px solid #fff8ee;
   border-radius: 50%;
+  box-shadow: 0 16px 34px rgba(43, 34, 24, 0.18);
 }
 
 @media (max-width: 768px) {

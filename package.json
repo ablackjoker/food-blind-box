@@ -1,7 +1,9 @@
 {
-  "name": "food-roulette",
+  "name": "food-blind-box",
   "version": "0.1.0",
-  "private": true,
+  "description": "中文本地随机美食盲盒 MVP",
+  "private": false,
+  "license": "MIT",
   "dependencies": {
     "@capacitor/android": "^8.0.2",
     "@capacitor/cli": "^8.0.2",
